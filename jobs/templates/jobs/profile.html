@@ -1,0 +1,64 @@
+{% extends 'jobs/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-8">
+    <aside class="w-full md:w-64 space-y-2">
+        <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] px-4 mb-4">Account Settings</h3>
+        <nav class="space-y-1">
+            <a href="{% url 'profile-settings' %}" class="block px-5 py-3 bg-red-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg">Account Info</a>
+            {% if user.is_seeker %}
+                <a href="{% url 'my-jobs' %}" class="block px-5 py-3 text-gray-400 hover:peach-white-text hover:bg-white/5 text-xs font-bold uppercase tracking-widest rounded-xl transition">My Jobs</a>
+            {% elif user.is_employer %}
+                <a href="{% url 'employer-dashboard' %}" class="block px-5 py-3 text-gray-400 hover:peach-white-text hover:bg-white/5 text-xs font-bold uppercase tracking-widest rounded-xl transition">Dashboard</a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <div class="flex-1 space-y-8">
+        <div class="bg-matte-card rounded-[2rem] overflow-hidden border border-white/5">
+            <div class="p-6 border-b border-white/5 bg-white/5">
+                <h2 class="font-black uppercase tracking-widest text-[10px]">
+                    <span class="peach-white-text">Edit Profile</span>
+                </h2>
+            </div>
+            <div class="p-8">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-500 uppercase mb-2 tracking-widest">Username</label>
+                            <input type="text" name="username" value="{{ user.username }}" class="w-full bg-zinc-900 peach-white-text p-3 border border-white/10 rounded-xl focus:border-red-500 outline-none font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-500 uppercase mb-2 tracking-widest">Email</label>
+                            <input type="email" name="email" value="{{ user.email }}" class="w-full bg-zinc-900 peach-white-text p-3 border border-white/10 rounded-xl focus:border-red-500 outline-none font-bold">
+                        </div>
+                    </div>
+                    <button type="submit" name="update_profile" class="btn-matte-search text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+       
+        <div class="bg-matte-card rounded-[2rem] overflow-hidden border border-white/5">
+            <div class="p-6 border-b border-white/5 bg-white/5">
+                <h2 class="font-black uppercase tracking-widest text-[10px]">
+                    <span class="peach-white-text">Security & Privacy</span>
+                </h2>
+            </div>
+            <div class="p-8">
+                <form method="post" class="max-w-sm">
+                    {% csrf_token %}
+                    <style>
+                        .dark-form input { background-color: #0f0f0f !important; border: 1px solid #222 !important; color: #fff5f0 !important; border-radius: 12px !important; }
+                        .dark-form label { color: #6b7280 !important; font-size: 10px !important; text-transform: uppercase !important; font-weight: 900 !important; }
+                    </style>
+                    <div class="dark-form">{{ pass_form|crispy }}</div>
+                    <button type="submit" name="update_password" class="mt-4 bg-white text-black px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-gray-200 transition">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

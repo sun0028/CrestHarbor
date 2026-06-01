@@ -1,0 +1,21 @@
+{% extends 'jobs/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12">
+    <div class="bg-matte-card p-10 rounded-[3rem] shadow-2xl border border-white/5">
+        <h2 class="text-3xl font-black mb-2 uppercase tracking-tighter">
+            <span class="peach-white-text">Apply for {{ job.title }}</span>
+        </h2>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-6 mt-8">
+            {% csrf_token %}
+            {{ form|crispy }} <!-- This renders the cover letter and resume fields -->
+            
+            <button type="submit" class="btn-matte-search w-full text-white py-4 rounded-xl font-black uppercase text-xs tracking-[0.2em]">
+                Submit Application ⚡
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

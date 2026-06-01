@@ -1,0 +1,37 @@
+{% extends 'jobs/base.html' %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-8 uppercase tracking-tighter">
+    <span class="peach-white-text">My Applications</span>
+</h1>
+
+<div class="bg-matte-card rounded-[2rem] overflow-hidden shadow-2xl">
+    <table class="w-full text-left">
+        <thead class="bg-white/5 border-b border-white/5 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">
+            <tr>
+                <th class="px-8 py-5">Job Title</th>
+                <th class="px-8 py-5">Company</th>
+                <th class="px-8 py-5 text-right">Status</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+            {% for app in applications %}
+            <tr class="hover:bg-white/5 transition">
+                <td class="px-8 py-5 font-bold text-lg">
+                    <span class="peach-white-text">{{ app.job.title }}</span>
+                </td>
+                <td class="px-8 py-5 text-gray-400 font-medium">
+                    {{ app.job.company.name }}
+                </td>
+                <td class="px-8 py-5 text-right">
+                    <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest 
+                        {% if app.status == 'Pending' %}bg-zinc-800 text-gray-400
+                        {% else %}bg-primary-red/20 crest-red-text border border-red-500/20{% endif %}">
+                        {{ app.status }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

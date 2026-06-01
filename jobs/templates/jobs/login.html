@@ -1,0 +1,30 @@
+{% extends 'jobs/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="max-w-md mx-auto py-12">
+    <div class="bg-matte-card p-10 rounded-[2.5rem] shadow-2xl border border-white/5">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold tracking-tighter uppercase">
+                <span class="peach-white-text">Login</span>
+            </h2>
+            <p class="text-gray-500 text-xs font-bold uppercase mt-2 tracking-widest">Portal Access</p>
+        </div>
+
+        <style>
+            form label { color: #6b7280 !important; font-size: 10px !important; text-transform: uppercase !important; font-weight: 900 !important; }
+            form input { background-color: #0f0f0f !important; border: 1px solid #222 !important; color: #fff5f0 !important; border-radius: 12px !important; padding: 12px !important; }
+        </style>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn-matte-search w-full text-white py-4 rounded-xl font-black uppercase text-xs tracking-[0.2em]">
+                Enter Platform
+            </button>
+        </form>
+        <div class="mt-6 text-center">
+            <a href="{% url 'seeker-signup' %}" class="text-[10px] font-black uppercase text-gray-500 hover:peach-white-text transition">New to CrestHarbor? Create Account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

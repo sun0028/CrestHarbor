@@ -1,0 +1,37 @@
+{% extends 'jobs/base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-bold tracking-tighter uppercase">
+            <span class="peach-white-text">Notifications</span>
+        </h1>
+        <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest px-3 py-1 bg-zinc-900 rounded-lg border border-white/5">
+            {{ notifications.count }} Total
+        </span>
+    </div>
+
+    <div class="space-y-4">
+        {% for note in notifications %}
+        <div class="bg-matte-card p-6 rounded-2xl flex items-start gap-4 hover:border-primary-red transition duration-500 group">
+            <div class="w-10 h-10 rounded-xl bg-zinc-900 text-red-500 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-red-500/50 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold leading-relaxed text-sm">
+                    <span class="peach-white-text">{{ note.message }}</span>
+                </p>
+                <p class="text-[10px] font-black text-gray-500 uppercase mt-2 tracking-widest">{{ note.created_at|timesince }} ago</p>
+            </div>
+            {% if not note.is_read %}
+                <div class="w-2 h-2 rounded-full bg-red-500 mt-2 shadow-[0_0_10px_#f03e3e]"></div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="bg-matte-card p-20 rounded-[3rem] text-center border-dashed border-white/10">
+            <div class="text-5xl mb-4 opacity-20">🔔</div>
+            <p class="text-gray-500 font-bold uppercase tracking-widest text-xs">No notifications yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'jobs/base.html' %}
+{% block content %}
+<div class="flex justify-between items-center mb-10">
+    <div>
+        <h1 class="text-3xl font-black tracking-tighter uppercase">
+            <span class="peach-white-text">Employer Dashboard</span>
+        </h1>
+        <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Manage your active listings</p>
+    </div>
+    <a href="{% url 'post-job' %}" class="btn-matte-red text-white px-8 py-3 rounded-xl font-bold transition">
+         Post New Job +
+    </a>
+</div>
+
+<div class="space-y-8">
+    {% for job in jobs %}
+    <div class="bg-matte-card rounded-[2rem] overflow-hidden">
+      
+        <div class="p-6 bg-white/5 border-b border-white/5 flex justify-between items-center">
+            <div>
+                <a href="{% url 'job-detail' job.id %}" class="text-xl font-bold transition-colors">
+                    <span class="peach-white-text hover:crest-red-text">{{ job.title }}</span>
+                </a>
+                <p class="text-[10px] font-black text-gray-500 uppercase mt-1 tracking-widest">
+                    {{ job.total_applicants }} Applicants • Posted {{ job.created_at|date:"M d, Y" }}
+                </p>
+            </div>
+            <a href="{% url 'edit-job' job.id %}" class="bg-zinc-800 border border-white/10 px-4 py-2 rounded-lg text-xs font-bold text-gray-300 hover:border-primary-red transition">
+                 Edit Listing
+            </a>
+        </div>
+
+    
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">
+                    <tr>
+                        <th class="px-8 py-4 border-b border-white/5">Applicant Name</th>
+                        <th class="px-8 py-4 border-b border-white/5">Resume</th>
+                        <th class="px-8 py-4 border-b border-white/5">Current Status</th>
+                        <th class="px-8 py-4 border-b border-white/5">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for app in job.applications.all %}
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="px-8 py-4 font-bold">
+                            <span class="peach-white-text">{{ app.applicant.username }}</span>
+                        </td>
+                        <td class="px-8 py-4">
+                            <a href="{{ app.resume.url }}" target="_blank" class="crest-red-text font-bold text-xs hover:underline uppercase tracking-widest">
+                                View Resume
+                            </a>
+                        </td>
+                        <td class="px-8 py-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest 
+                                {% if app.status == 'Accepted' %}bg-green-900/20 text-green-400
+                                {% elif app.status == 'Rejected' %}bg-red-900/20 text-red-400
+                                {% else %}bg-zinc-800 text-gray-400{% endif %}">
+                                {{ app.status }}
+                            </span>
+                        </td>
+                        <td class="px-8 py-4">
+                            <form action="{% url 'update-status' app.id %}" method="POST">
+                                {% csrf_token %}
+                                <select name="status" onchange="this.form.submit()" class="bg-zinc-900 text-white text-[10px] font-bold border-white/10 rounded-lg p-2 focus:ring-primary-red outline-none">
+                                    <option value="Pending" {% if app.status == 'Pending' %}selected{% endif %}>Update Status</option>
+                                    <option value="Shortlisted" {% if app.status == 'Shortlisted' %}selected{% endif %}>Shortlist</option>
+                                    <option value="Accepted" {% if app.status == 'Accepted' %}selected{% endif %}>Accept</option>
+                                    <option value="Rejected" {% if app.status == 'Rejected' %}selected{% endif %}>Reject</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="px-8 py-12 text-center text-gray-500 text-xs font-bold uppercase tracking-widest">No applications yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-20 bg-matte-card rounded-[2rem]">
+        <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">You haven't posted any jobs yet.</p>
+        <a href="{% url 'post-job' %}" class="mt-4 inline-block crest-red-text font-bold hover:underline">Create listing</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
