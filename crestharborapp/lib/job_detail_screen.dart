@@ -95,36 +95,37 @@ void _showApplyModal(BuildContext context) {
               const SizedBox(height: 30),
               ElevatedButton(
   onPressed: () async {
-  
+   
     if (filePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please attach a resume PDF"))
+        const SnackBar(content: Text("Please attach a resume PDF")),
       );
       return;
     }
 
-    final messenger = ScaffoldMessenger.of(context);
+    final messenger = ScaffoldMessenger.of(this.context); 
     final navigator = Navigator.of(context);
 
     try {
-     
+      
       bool ok = await JobService().applyToJob(
-        widget.job['id'], 
-        coverController.text.isEmpty ? "Applied via Mobile" : coverController.text, 
-        filePath
+        widget.job['id'],
+        coverController.text.isEmpty ? "Applied via Mobile" : coverController.text,
+        filePath,
       );
 
       if (ok) {
-        if (mounted) {
-          setState(() => _hasApplied = true);
-        }
+        if (mounted) setState(() => _hasApplied = true);
         navigator.pop(); 
         messenger.showSnackBar(
-          const SnackBar(backgroundColor: Colors.green, content: Text("Application Sent! ⚡"))
+          const SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Application Sent Successfully! "),
+          ),
         );
       } else {
         messenger.showSnackBar(
-          const SnackBar(backgroundColor: Colors.red, content: Text("Server error. Please try again."))
+          const SnackBar(backgroundColor: Colors.red, content: Text("Server error. Try again.")),
         );
       }
     } catch (e) {
@@ -138,6 +139,7 @@ void _showApplyModal(BuildContext context) {
   ),
   child: const Text("CONFIRM APPLICATION", style: TextStyle(fontWeight: FontWeight.bold)),
 ),
+  
 
               const SizedBox(height: 40),
             ],
