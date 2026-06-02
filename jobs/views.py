@@ -14,8 +14,11 @@ from django.views.decorators.csrf import csrf_exempt
 # REST Framework imports
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Company, Job, Application, User, Notification
 from .serializers import JobSerializer, UserSerializer
@@ -163,7 +166,10 @@ class JobCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApplyJobView(LoginRequiredMixin, View):
+class ApplyJobView(APIView):
+    authentication_classes = [JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         job = get_object_or_404(Job, id=pk)
         if Application.objects.filter(job=job, applicant=request.user).exists():
@@ -176,18 +182,17 @@ class ApplyJobView(LoginRequiredMixin, View):
 
     def post(self, request, pk):
         job = get_object_or_404(Job, id=pk)
-        
-        
+
+       
         if Application.objects.filter(job=job, applicant=request.user).exists():
             if 'application/json' in request.META.get('HTTP_ACCEPT', ''):
-                return JsonResponse({"error": "Already applied"}, status=400)
+                return Response({"error": "Already applied"}, status=400)
             return redirect('job-detail', pk=job.id)
 
-       
-        cover = request.POST.get('cover_letter', 'Applied via Mobile')
+        
+        cover = request.data.get('cover_letter', 'Applied via Mobile')
         resume = request.FILES.get('resume')
 
-       
         app = Application.objects.create(
             job=job,
             applicant=request.user,
@@ -201,12 +206,11 @@ class ApplyJobView(LoginRequiredMixin, View):
             message=f"New Applicant: {request.user.username} for {job.title}"
         )
 
-       
-        if 'application/json' in request.META.get('HTTP_ACCEPT', '') or request.content_type == 'application/json':
-            return JsonResponse({"status": "success", "id": app.id}, status=201)
         
-        
-        messages.success(request, "Application submitted successfully! ⚡")
+        if 'application/json' in request.META.get('HTTP_ACCEPT', '') or request.content_type and 'multipart' in request.content_type:
+            return Response({"status": "success", "id": app.id}, status=201)
+
+        messages.success(request, "Application submitted successfully! ")
         return redirect('job-detail', pk=job.id)
     
 class EmployerDashboardView(LoginRequiredMixin, ListView):
